@@ -1,0 +1,24 @@
+{
+  "name": "celionatti/nattix",
+  "description": "Nattix is a PHP Framework Plugins Package",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "X\\": "x/",
+      "X\\Packages\\": "x/packages/",
+      "Nattix\\Plugins\\": "plugins/",
+      "Nattix\\": "./"
+    }
+  },
+  "authors": [
+    {
+      "name": "celionatti",
+      "email": "celionattidev@gmail.com"
+    }
+  ],
+  "require": {
+    "vlucas/phpdotenv": "^5.6",
+    "kint-php/kint": "^5.1"
+  }
+}
