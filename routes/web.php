@@ -15,5 +15,5 @@ use X\X;
  */
 
 
-$x->router::get("/", [SiteController::class, 'index']);
+$x->router::get("/", [SiteController::class, 'index'], ['auth']);
 $x->router::get("/users", [SiteController::class, 'users']);

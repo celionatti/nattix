@@ -21,14 +21,15 @@ class Router
     private static array $routeMap;
 //    private array $routeMap = [];
     private string $controllerNamespace = "\\Nattix\\controllers\\"; // Set your default namespace here
+    private string $middlewareNamespace = "\\Nattix\\middlewares\\"; // Set your default namespace here
 
     public function __construct(public Request $request, public Response $response)
     {
     }
 
-    public static function get(string $url, $callback): void
+    public static function get(string $url, $callback, array $middlewares = []): void
     {
-        self::$routeMap['GET'][$url] = $callback;
+        self::$routeMap['GET'][$url] = ['callback' => $callback, 'middlewares' => $middlewares];
     }
 
     public static function post(string $url, $callback): void
@@ -75,6 +76,11 @@ class Router
     public function setControllerNamespace(string $namespace): void
     {
         $this->controllerNamespace = $namespace;
+    }
+
+    public function setMiddlewareNamespace(string $namespace): void
+    {
+        $this->middlewareNamespace = $namespace;
     }
 
     public function getCallback()
@@ -135,7 +141,7 @@ class Router
     {
         $method = $this->request->method();
         $url = $this->request->getPath();
-        $callback = self::$routeMap[$method][$url] ?? false;
+        $callback = self::$routeMap[$method][$url]['callback'] ?? false;
         if (!$callback) {
 
             $callback = $this->getCallback();
@@ -158,17 +164,39 @@ class Router
                 }
 
                 // Create the controller instance
-                $controllerClass = "$this->controllerNamespace . $controllerName";
+                $controllerClass = $this->controllerNamespace . $controllerName;
                 $controller = new $controllerClass();
                 $controller->action = $actionName;
 
                 // Set the controller in your application (you'll need to modify this according to your application's structure)
-                X::$x->controller = $controller;
+                $this->setController($controller);
+
+                // Get middlewares for the current route
+                $middlewares = self::$routeMap[$method][$url]['middlewares'] ?? [];
 
                 // Execute any middlewares
-                $middlewares = $controller->getMiddlewares();
                 foreach ($middlewares as $middleware) {
-                    $middleware->execute();
+                    // Check if $middleware is a string (class name) and instantiate the class
+                    if (is_string($middleware)) {
+                        // Check if $middleware is a class name
+                        $middlewareName = ucfirst($middleware) . "Middleware";
+                        $middlewareClass = $this->middlewareNamespace . $middlewareName;
+                        if (class_exists($middlewareClass)) {
+                            // Instantiate the class and execute the method if available
+                            $middlewareInstance = new $middlewareClass();
+                            if (method_exists($middlewareInstance, 'execute')) {
+                                $middlewareInstance->execute();
+                            }
+                        } else {
+                            // If it's not a class, assume it's a function and call it
+                            if (function_exists($middleware)) {
+                                $middleware($this->request, $this->response);
+                            }
+                        }
+                    } elseif (is_callable($middleware)) {
+                        // Check if $middleware is a callable function and call it
+                        $middleware($this->request, $this->response);
+                    }
                 }
 
                 // Replace the $callback variable with the controller and action
@@ -181,13 +209,38 @@ class Router
              */
             $controller = new $callback[0];
             $controller->action = $callback[1];
-            X::$x->controller = $controller;
-            $middlewares = $controller->getMiddlewares();
+            $this->setController($controller);
+            $middlewares = self::$routeMap[$method][$url]['middlewares'] ?? [];
             foreach ($middlewares as $middleware) {
-                $middleware->execute();
+                // Check if $middleware is a string (class name) and instantiate the class
+                if (is_string($middleware)) {
+                    // Check if $middleware is a class name
+                    $middlewareName = ucfirst($middleware) . "Middleware";
+                    $middlewareClass = $this->middlewareNamespace . $middlewareName;
+                    if (class_exists($middlewareClass)) {
+                        // Instantiate the class and execute the method if available
+                        $middlewareInstance = new $middlewareClass();
+                        if (method_exists($middlewareInstance, 'execute')) {
+                            $middlewareInstance->execute();
+                        }
+                    } else {
+                        // If it's not a class, assume it's a function and call it
+                        if (function_exists($middleware)) {
+                            $middleware($this->request, $this->response);
+                        }
+                    }
+                } elseif (is_callable($middleware)) {
+                    // Check if $middleware is a callable function and call it
+                    $middleware($this->request, $this->response);
+                }
             }
             $callback[0] = $controller;
         }
         return call_user_func($callback, $this->request, $this->response);
+    }
+
+    private function setController($controller): void
+    {
+        X::$x->controller = $controller;
     }
 }

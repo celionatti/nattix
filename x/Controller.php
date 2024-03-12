@@ -21,11 +21,6 @@ class Controller
     public string $action = '';
     protected string|null|int $currentUser;
 
-    /**
-     * @var Middleware[]
-     */
-    protected array $middlewares = [];
-
     public function __construct()
     {
         $this->view = new Xview();
@@ -36,19 +31,6 @@ class Controller
     {
         // Allow the developer to set the current user
         $this->currentUser = $user;
-    }
-
-    public function registerMiddleware(Middleware $middleware): void
-    {
-        $this->middlewares[] = $middleware;
-    }
-
-    /**
-     * @return Middleware[]
-     */
-    public function getMiddlewares(): array
-    {
-        return $this->middlewares;
     }
 
     public function json_response($data, $statusCode = 200, $headers = [], $options = JSON_PRETTY_PRINT, $enableCompression = true): void
