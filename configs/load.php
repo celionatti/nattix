@@ -10,3 +10,4 @@ declare(strict_types=1);
  */
 
 const URL_ROOT = "http://nattix.test";
+const COOKIE_SECRET = "nattix_secret";

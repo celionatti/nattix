@@ -5,7 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/." isTestSource="false" packagePrefix="Nattix\" />
       <sourceFolder url="file://$MODULE_DIR$/plugins" isTestSource="false" packagePrefix="Nattix\Plugins\" />
       <sourceFolder url="file://$MODULE_DIR$/x" isTestSource="false" packagePrefix="X\" />
-      <sourceFolder url="file://$MODULE_DIR$/x/packages" isTestSource="false" packagePrefix="X\Packages\" />
+      <sourceFolder url="file://$MODULE_DIR$/x/plugins" isTestSource="false" packagePrefix="X\Plugins\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/graham-campbell/result-type" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpoption/phpoption" />

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace X;
 
 use Throwable;
+use X\Container\Container;
 use X\HTTP\Request;
 use X\HTTP\Response;
 use X\Resolver\PathResolver;
@@ -24,6 +25,10 @@ class X
     public PathResolver $pathResolver;
     public PathResolver $assetsResolver;
     public Config $config;
+
+    public Session $session;
+
+    public Container $container;
     public Request $request;
     public Response $response;
     public Router $router;
@@ -35,6 +40,8 @@ class X
         $this->pathResolver = new PathResolver(dirname(__DIR__));
         $this->assetsResolver = new PathResolver("nattix.test");
         $this->config = Config::getInstance();
+        $this->session = Session::getInstance();
+        $this->container = new Container();
         $this->request = new Request();
         $this->response = new Response();
         $this->router = new Router($this->request, $this->response);
