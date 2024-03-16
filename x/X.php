@@ -13,6 +13,7 @@ namespace X;
 
 use Throwable;
 use X\Container\Container;
+use X\Database\Database;
 use X\HTTP\Request;
 use X\HTTP\Response;
 use X\Resolver\PathResolver;
@@ -33,6 +34,11 @@ class X
     public Response $response;
     public Router $router;
 
+    public Database $database;
+
+    /**
+     * @throws \Exception
+     */
     public function __construct()
     {
         $this->require_files();
@@ -45,6 +51,13 @@ class X
         $this->request = new Request();
         $this->response = new Response();
         $this->router = new Router($this->request, $this->response);
+
+        $this->container->singleton("Database", function () {
+            return new Database();
+        });
+
+        $this->database = $this->container->make("Database");
+        var_dump($this->database);
     }
 
     private function require_files(): void
