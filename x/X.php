@@ -57,7 +57,6 @@ class X
         });
 
         $this->database = $this->container->make("Database");
-        var_dump($this->database);
     }
 
     private function require_files(): void

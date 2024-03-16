@@ -98,15 +98,15 @@ class Database
         if ($errorCode === 1062) {
             // Handle duplicate entry error
             // Example: Notify admin or display a user-friendly message
-            echo "Error: Duplicate entry detected!";
+            x_die("Error: Duplicate entry detected!");
         } elseif ($errorCode === 1045) {
             // Handle authentication error
             // Example: Redirect user to login page or display an error message
-            echo "Error: Authentication failed!";
+            x_die("Error: Authentication failed!");
         } else {
             // Handle other errors or generic fallback
             // Example: Display a generic error message to the user
-            echo "Error: Something went wrong. Please try again later.";
+            x_die("Error: Something went wrong. Please try again later.");
         }
 
         // Optionally, you can log the SQL query and parameters causing the error
