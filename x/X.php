@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace X;
 
+use Exception;
 use Throwable;
 use X\Container\Container;
 use X\Database\Database;
@@ -37,7 +38,7 @@ class X
     public Database $database;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct()
     {
@@ -80,10 +81,22 @@ class X
     }
 
     /**
+     * @throws Exception
+     */
+    private function loadPlugins(): void
+    {
+        loadPlugins('plugins/', function ($packagePath) {
+            // Custom filter: Include only packages containing a specific file
+            return file_exists($packagePath . DIRECTORY_SEPARATOR . 'install.json');
+        }, true, ['controllers']);
+    }
+
+    /**
      * @throws Throwable
      */
     public function run(): void
     {
+        $this->loadPlugins();
         $this->router->resolve();
     }
 }

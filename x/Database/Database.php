@@ -14,6 +14,7 @@ namespace X\Database;
 use Exception;
 use PDO;
 use PDOException;
+use X\Exception\XException;
 use X\QueryBuilder\XQueryBuilder;
 use X\X;
 
@@ -22,24 +23,32 @@ class Database
     public array $missing_tables = [];
     protected array $fillable = [];
 
-    private PDO $connection;
+    private $connection;
     private $error;
+    private \X\Config $config;
     private static Database $instances;
-    private int $fetchType = PDO::FETCH_ASSOC;
+    private int $fetchType = PDO::FETCH_OBJ;
 
+    /**
+     * @throws XException
+     */
     public function __construct()
     {
-        $config = X::$x->config;
+        $this->config = X::$x->config;
         $databaseConfig = [
-            "drivers" => $config->get('DB_DRIVERS'),
-            "host" => $config->get('DB_HOST'),
-            "dbname" => $config->get('DB_DATABASE'),
-            "username" => $config->get('DB_USERNAME'),
-            "password" => $config->get('DB_PASSWORD')
+            "drivers" => $this->config->get('DB_DRIVERS'),
+            "host" => $this->config->get('DB_HOST'),
+            "dbname" => $this->config->get('DB_DATABASE'),
+            "username" => $this->config->get('DB_USERNAME'),
+            "password" => $this->config->get('DB_PASSWORD')
         ];
+
         $this->connect($databaseConfig);
     }
 
+    /**
+     * @throws XException
+     */
     private function connect($config): void
     {
         $dsn = "{$config['drivers']}:host={$config['host']};dbname={$config['dbname']}";
@@ -50,7 +59,8 @@ class Database
             $this->connection->setAttribute(PDO::ATTR_PERSISTENT, true);
             $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
         } catch (PDOException $e) {
-            $this->handleDatabaseError($e->getMessage(), $e->getCode());
+//            $this->handleDatabaseError($e->getMessage(), $e->getCode());
+            throw new XException($e->getMessage(), $e->getCode());
         }
     }
 
@@ -130,6 +140,31 @@ class Database
             self::$instances = new self();
         }
         return self::$instances;
+    }
+    
+    public function setFetchType($type): void
+    {
+        $this->fetchType = $type;
+    }
+
+    /**
+     * @throws XException
+     */
+    public function createDatabaseIfNotExists(): void
+    {
+        try {
+            $stmt = $this->connection->prepare("SHOW DATABASES LIKE :dbname");
+            $database = $this->config->get("DB_DATABASE");
+            $stmt->bindParam(':dbname', $database);
+            $stmt->execute();
+            $result = $stmt->fetch($this->fetchType);
+
+            if (!$result) {
+                $this->connection->exec("CREATE DATABASE " . $database);
+            }
+        } catch (PDOException $e) {
+            throw new XException($e->getMessage(), $e->getCode());
+        }
     }
 
     public function prepare($query): false|\PDOStatement

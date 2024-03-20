@@ -169,7 +169,7 @@ class Router
                 $controller->action = $actionName;
 
                 // Set the controller in your application (you'll need to modify this according to your application's structure)
-                list($middlewares, $middleware, $middlewareName, $middlewareClass, $middlewareInstance) = $this->extracted($controller, $method, $url);
+                list($middlewares) = $this->extracted($controller, $method, $url);
 
                 // Replace the $callback variable with the controller and action
                 $callback = [$controller, $actionName];
@@ -181,7 +181,7 @@ class Router
              */
             $controller = new $callback[0];
             $controller->action = $callback[1];
-            list($middlewares, $middleware, $middlewareName, $middlewareClass, $middlewareInstance) = $this->extracted($controller, $method, $url);
+            list($middlewares) = $this->extracted($controller, $method, $url);
             $callback[0] = $controller;
         }
         return call_user_func($callback, $this->request, $this->response);
@@ -229,6 +229,6 @@ class Router
                 $middleware($this->request, $this->response);
             }
         }
-        return array($middlewares, $middleware, $middlewareName, $middlewareClass, $middlewareInstance);
+        return array($middlewares);
     }
 }

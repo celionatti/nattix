@@ -15,4 +15,4 @@ use X\X;
  */
 
 
-$x->router::get("/home", [SiteController::class, 'index'], ['auth']);
+$x->router::get("/users", [SiteController::class, 'users']);

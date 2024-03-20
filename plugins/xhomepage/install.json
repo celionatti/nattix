@@ -1,0 +1,11 @@
+{
+  "name": "xhomepage",
+  "id":"xhomepage",
+  "index":2,
+  "active": true,
+  "page": ["*"],
+  "version":"1.0.0",
+  "author": "celio natti",
+  "thumbnail": "",
+  "dependencies": {}
+}

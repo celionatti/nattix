@@ -6,7 +6,6 @@
     {{stylesheets}}
 </head>
 <body>
-
     {{content}}
 
 {{scripts}}

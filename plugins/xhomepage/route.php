@@ -5,6 +5,7 @@ declare(strict_types=1);
 global $x;
 
 use Nattix\controllers\SiteController;
+use Nattix\Plugins\xhomepage\controllers\XHomepageController;
 use X\X;
 
 /**
@@ -15,4 +16,4 @@ use X\X;
  */
 
 
-$x->router::get("/home", [SiteController::class, 'index'], ['auth']);
+$x->router::get("/", [XHomepageController::class, 'index']);

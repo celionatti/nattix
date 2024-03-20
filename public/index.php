@@ -19,6 +19,21 @@ $dotenv->load();
 
 $x = new X();
 
-require $x->pathResolver->routesPath() . DIRECTORY_SEPARATOR . "web.php";
+$x_app = [];
+$x_actions = [];
+$x_filters = [];
+$x_data = [];
 
-$x->run();
+require $x->pathResolver->routesPath() . DIRECTORY_SEPARATOR . "web.php";
+$pluginRoutes = $x->pathResolver->pluginRoutes();
+
+if ($pluginRoutes !== null) {
+    foreach ($pluginRoutes as $pluginRoute) {
+        require $pluginRoute;
+    }
+}
+
+try {
+    $x->run();
+} catch (Throwable $e) {
+}

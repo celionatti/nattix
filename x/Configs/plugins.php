@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use X\X;
+
 /**
  * Framework Title: Natti-X
  * Author: Celio Natti
@@ -46,19 +48,20 @@ function getPluginFolders($pluginPath): array
  */
 function loadPluginFolders($pluginsFolder = 'plugins/', $filter = null, $includeInfo = false, $requiredFolders = []): array
 {
+    $pathResolver = X::$x->pathResolver;
     $result = [];
 
     // Ensure the plugins folder path ends with a directory separator
-    $plugins_folder = rtrim($pluginsFolder, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    $pluginsFolder = rtrim($pluginsFolder, DIRECTORY_SEPARATOR);
 
-    $folders = scandir(dirname(__DIR__) . DIRECTORY_SEPARATOR . $plugins_folder);
+    $folders = scandir($pathResolver->resolve() . $pluginsFolder);
 
     if (!$folders) {
         throw new Exception("Folders Not Found");
     }
 
     foreach ($folders as $folder) {
-        $folderPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . $plugins_folder . $folder;
+        $folderPath = $pathResolver->resolve() . $pluginsFolder . $folder;
 
         if ($folder != '.' && $folder != '..' && is_dir($folderPath)) {
             // Check if the plugin meets the filtering criteria
@@ -89,6 +92,30 @@ function loadPluginFolders($pluginsFolder = 'plugins/', $filter = null, $include
     }
 
     return $result;
+}
+
+function getDatabasePlugins($pluginsFolder): array
+{
+    $db = X::$x->database;
+    $pathResolver = X::$x->pathResolver;
+    $data = [];
+    $db->setFetchType(PDO::FETCH_ASSOC);
+    $pluginsData = $db->queryAndFetch("SELECT * FROM plugins WHERE status = :status", ['status' => 'active']);
+
+    if ($pluginsData) {
+        foreach ($pluginsData as $pluginData) {
+            $dbPluginPath = $pathResolver->resolve() . $pluginsFolder . $pluginData['name'];
+            $pluginStatus = $pluginData['status'];
+
+            if (!file_exists($dbPluginPath)) {
+                mkdir($dbPluginPath, 0755, true);
+            }
+
+            $data[$pluginData['name']] = $pluginStatus;
+        }
+    }
+
+    return $data;
 }
 
 /**

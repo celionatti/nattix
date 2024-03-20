@@ -17,6 +17,6 @@ class AuthMiddleware extends Middleware
 {
     public function execute()
     {
-
+//        x_die("Auth Middleware");
     }
 }

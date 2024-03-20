@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace X\View;
 
+use Exception;
+use X\Exception\XException;
 use X\Resolver\PathResolver;
 
 class Xview
@@ -21,6 +23,8 @@ class Xview
     private array $assets = ['css' => [], 'js' => []];
     private PathResolver $path;
     private PathResolver $urlPath;
+
+    protected array $plugins = [];
 
     public function __construct(private readonly string $templatePath = 'templates/', private readonly string $layoutPath = 'layouts/')
     {
@@ -53,6 +57,9 @@ class Xview
         $this->assets['js'][] = $path;
     }
 
+    /**
+     * @throws Exception
+     */
     public function render($template): void
     {
         $templatePath = $this->path->resolve() . $this->templatePath . $template . ".php";
@@ -103,4 +110,5 @@ class Xview
 
         return $output;
     }
+
 }

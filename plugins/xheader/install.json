@@ -1,0 +1,11 @@
+{
+  "name": "xheader",
+  "id":"xheader",
+  "index":1,
+  "active": true,
+  "page": ["*"],
+  "version":"1.0.0",
+  "author": "celio natti",
+  "thumbnail": "",
+  "dependencies": {}
+}

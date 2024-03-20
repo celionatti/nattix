@@ -44,7 +44,7 @@ function x_die($value, $die = true): void
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
+            background-color: #23cb8b;
         }
 
         .sf-dump-container {
@@ -60,7 +60,7 @@ function x_die($value, $die = true): void
             text-align: left;
             white-space: pre;
             word-wrap: normal;
-            background: #282828;
+            background: #3b5d50;
             color: #eeeeee;
             line-height: 1.2;
             margin: 0;
@@ -73,7 +73,7 @@ function x_die($value, $die = true): void
         }
 
         .sf-dump-two {
-            background-color: #dc3545; /* Error background color */
+            background-color: #23cb8b; /* Error background color */
             color: #ffffff; /* Error text color */
             line-height: 1.5;
             padding: 20px;
@@ -88,6 +88,11 @@ function x_die($value, $die = true): void
         .sf-dump-two a {
             color: #ffffff;
             text-decoration: underline;
+        }
+        
+        .sf-dump-two h2 {
+            text-transform: uppercase;
+            font-size: 18px;
         }
 
         /* Style for link hover effect */
@@ -104,7 +109,7 @@ function x_die($value, $die = true): void
             <p>Please <a href="#">click here</a> to go back to the previous page.</p>
         </div>
         <pre class="sf-dump">
-            <h4 class="sf-dump-public"><a>DETAILS</a></h4>
+            <h3 class="sf-dump-public"><a>DETAILS</a></h3>
 HTML;
 
     var_dump($value);
